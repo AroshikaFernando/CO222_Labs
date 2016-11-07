@@ -1,31 +1,28 @@
 #include <stdio.h>
-#include <stdlib.h>
 
-//function prototypes
 void Add();
 void print();
 void printall();
 void delete();
 
-//create a structure (create new data type)
-typedef struct _{
+
+typedef struct _ {
 	int batch;
 	int regNo;
 	char firstName[20];
 	char lastName[20];
 	float cGPA;
-	struct _* next;
 }student_t;
 
+student_t student_record[1000];
+int count = 0;
 char reg_no[8];
-student_t * head  = NULL;
-
+int r_no;
 
 int main(){
 	int task;
-	// create UI
+	
 	do{
-
 		printf("---------------------------------------------\n");
 		printf("A VOLATILE STUDENT RECORD MAINTAINANCE SYSTEM\n");
 		printf("---------------------------------------------\n");
@@ -35,112 +32,74 @@ int main(){
 		printf("3. print all Student Record\n");
 		printf("4. Delete a Student Record\n");
 
-
+	
 	scanf("%d",&task);
 		if(task == 0){
-			return 0;        //for quit
+			//return 0;
 		}else if(task == 1){
-			Add();      //call add function
+			Add();
 		}else if(task == 2){
-			printf("Enter the Registration number: ");     //to take registration no from user which want to print
+			printf("Enter the Registration number: ");
 			scanf("%s",reg_no);
-			print();     // call print function
+			print();
 		}else if(task == 3){
-		     printall();   //call printall function
+		    printall();
 		}else if(task == 4){
-			printf("Enter the Registration number: ");          //to take registration no from user which want to delete
-			scanf("%s",reg_no);
-			delete();    //call delete function
+			delete();
 		}
 	}while(task!=0);
 	return 0;
 	}
-
-
-//add function
+	
 void Add(){
-
-	  student_t * current;
-	   current = (student_t*)malloc(sizeof(student_t));  //allocate memory for current
-
-	//take student data from user
+	student_t student;
+	
 	printf("Enter the batch(11/12/13/14): ");
-	scanf("%d",&current->batch);
+	scanf("%d",&student.batch);
 	printf("Enter the registeration number: ");
-	scanf("%d",&current->regNo);
+	scanf("%d",&student.regNo);
 	printf("Enter the first name: ");
-	scanf("%s",current->firstName);
-	printf("Ente r the last name: ");
-	scanf("%s",current->lastName);
+	scanf("%s",student.firstName);
+	printf("Enter the last name: ");
+	scanf("%s",student.lastName);
 	printf("Enter the GPA: ");
-	scanf("%f",&current->cGPA);
-
-	current->next = head;     //assign head value to next of current object
-	head = current;            // assign current to head
-
-}
-
+	scanf("%f",&student.cGPA);
+	
+	student_record[count] = student;
+	count++;
+	}
+	
 void print(){
-
-   student_t * current1;
-
-   //take batch and E number seperately
+	int j;
 	int yr = (reg_no[2]-48)*10 + (reg_no[3]-48);
 	int e_no = (reg_no[5]-48)*100 + (reg_no[6]-48)*10 + (reg_no[7]-48);
-	//print student record
-	for(current1= head ; current1 != NULL ; current1 = current1->next){
-	   if(current1->regNo == e_no && current1->batch == yr){
-		   printf("The student %s %s (E/%.2d/%.3d) has a cumulative GPA of %f\n",current1->firstName,current1->lastName,current1->batch,current1->regNo,current1->cGPA);
+
+for(j=0;j<count;j++){
+	   if(student_record[j].regNo == e_no && student_record[j].batch == yr){
+		   printf("The student %s %s (E/%d/%d) has a cumulative GPA of %f",student_record[j].firstName,student_record[j].lastName,student_record[j].batch,student_record[j].regNo,student_record[j].cGPA);
+			
 	}
-   }
+}
 }
 
-//print All function
 void printall(){
-	student_t * current1;
-	// printing all data
-	for(current1=head ; current1!=NULL ; current1 = current1->next){
-	 printf("The student %s %s (E/%.2d/%.3d) has a cumulative GPA of %f\n",current1->firstName,current1->lastName,current1->batch,current1->regNo,current1->cGPA);
+	int j;
+for(j=0;j<count;j++){
+	 printf("The student %s %s (E/%d/%d) has a cumulative GPA of %f\n",student_record[j].firstName,student_record[j].lastName,student_record[j].batch,student_record[j].regNo,student_record[j].cGPA);
 	}
-}
-
-
-//delete function
+	}
+	
 void delete(){
-	student_t * temp;      //creating student_t type teobject
-	student_t * current1;
-
-
-	//take batch and E no separately
+	int j;
+	printf("Enter the Registration number: ");
+	scanf("%s",reg_no);
 	int yr = (reg_no[2]-48)*10 + (reg_no[3]-48);
 	int e_no = (reg_no[5]-48)*100 + (reg_no[6]-48)*10 + (reg_no[7]-48);
 
-	current1 = head;
-	if(current1 -> regNo == e_no && current1 -> batch == yr){   // delete the first node
-			temp = current1 -> next;
-			free(current1);
-			head = temp;
-    }
-    else{
-
-            temp = head;
-            current1 = head -> next;
-
-            while(current1 -> regNo != e_no && current1 -> batch != yr){
-                current1 = current1 -> next;
-                temp = temp -> next;
-            }
-            if(current1 -> next == NULL){   // delete the last node
-                temp -> next = NULL;
-                free(current1);
-                current1 = temp;
-            }
-            else{
-                temp -> next = current1 -> next;   // delete a middle node
-                free(current1);
-                temp = current1;
-            }
-
-    }
-
-}
+	for(j=0;j<count;j++){
+		if(student_record[j].regNo == e_no && student_record[j].batch == yr){
+			student_record[j] = student_record[j+1];
+			}
+		}
+		count = count -1;
+	}
